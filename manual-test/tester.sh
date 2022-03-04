@@ -1,0 +1,1 @@
+curl --header "Content-Type: text/xml;charset=UTF-8" -d @request.xml -o response.xml http://uws.provider.com/

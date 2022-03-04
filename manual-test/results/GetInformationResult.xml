@@ -1,0 +1,40 @@
+<!--Valid User-->
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://uws.provider.com/">
+    <SOAP-ENV:Body>
+        <ns1:GetInformationResult>
+            <errorMsg>success</errorMsg>
+            <status>200</status>
+            <timeStamp>2022-03-04 11:46:12</timeStamp>
+            <parameters>
+                <paramKey>card_number</paramKey>
+                <paramValue>9992 1159 7593 8536</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>limit</paramKey>
+                <paramValue>50000</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>balance</paramKey>
+                <paramValue>500000</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>name</paramKey>
+                <paramValue>pablo</paramValue>
+            </parameters>
+        </ns1:GetInformationResult>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+<!--Invalid User-->
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://uws.provider.com/">
+<SOAP-ENV:Body>
+    <ns1:GetInformationResult>
+        <errorMsg>not valid user</errorMsg>
+        <status>500</status>
+        <timeStamp>2022-03-04 11:49:08</timeStamp>
+    </ns1:GetInformationResult>
+</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+

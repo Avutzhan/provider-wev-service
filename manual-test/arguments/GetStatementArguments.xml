@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+        <ns1:GetStatementArguments
+                xmlns:ns1="http://uws.provider.com/"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:type="ns1:GetStatementArguments">
+            <password>pwd</password>
+            <username>user</username>
+            <parameters>
+                <paramKey>customer_id</paramKey>
+                <paramValue>6324357</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>pin</paramKey>
+                <paramValue>12345678</paramValue>
+            </parameters>
+            <dateFrom>2011-04-26T18:07:22</dateFrom>
+            <dateTo>2011-04-26T18:07:22</dateTo>
+            <serviceId>1</serviceId>
+            <onlyTransactionId>1</onlyTransactionId>
+        </ns1:GetStatementArguments>
+    </soapenv:Body>
+</soapenv:Envelope>

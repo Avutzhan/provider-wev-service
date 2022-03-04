@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://uws.provider.com/">
+    <SOAP-ENV:Body>
+        <ns1:GetStatementResult>
+            <errorMsg>no err</errorMsg>
+            <status>2</status>
+            <timeStamp>1000-01-01 00:00:0</timeStamp>
+            <statements>
+                <amount>1</amount>
+                <providerTrnId>2</providerTrnId>
+                <transactionId>1</transactionId>
+                <transactionTime>1000-01-01 00:00:0</transactionTime>
+            </statements>
+        </ns1:GetStatementResult>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

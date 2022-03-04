@@ -1,0 +1,33 @@
+<!--Valid User-->
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+        <ns1:GetInformationArguments xmlns:ns1="http://uws.provider.com/"
+                                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:
+GetInformationArguments">
+            <password>123</password>
+            <username>pablo_escobar</username>
+            <parameters>
+                <paramKey>client_id</paramKey>
+                <paramValue>1</paramValue>
+            </parameters>
+            <serviceId>1</serviceId>
+        </ns1:GetInformationArguments>
+    </soapenv:Body>
+</soapenv:Envelope>
+
+<!--Invalid User-->
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<soapenv:Body>
+    <ns1:GetInformationArguments xmlns:ns1="http://uws.provider.com/"
+                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns1:
+GetInformationArguments">
+        <password>1232</password>
+        <username>bruce_wayne</username>
+        <parameters>
+            <paramKey>client_id</paramKey>
+            <paramValue>1</paramValue>
+        </parameters>
+        <serviceId>1</serviceId>
+    </ns1:GetInformationArguments>
+</soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://uws.provider.com/">
+    <SOAP-ENV:Body>
+        <ns1:CancelTransactionResult>
+            <errorMsg>no err</errorMsg>
+            <status>2</status>
+            <timeStamp>1000-01-01 00:00:0</timeStamp>
+            <transactionState>2</transactionState>
+        </ns1:CancelTransactionResult>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

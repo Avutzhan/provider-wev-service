@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://uws.provider.com/">
+    <SOAP-ENV:Body>
+        <ns1:PerformTransactionResult>
+            <errorMsg>success</errorMsg>
+            <status>200</status>
+            <timeStamp>2022-03-05 04:10:11</timeStamp>
+            <parameters>
+                <paramKey>balance</paramKey>
+                <paramValue>20000</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>traffic</paramKey>
+                <paramValue>33344</paramValue>
+            </parameters>
+            <parameters>
+                <paramKey>date</paramKey>
+                <paramValue>2022-03-05 04:07:48</paramValue>
+            </parameters>
+            <providerTrnId>36</providerTrnId>
+        </ns1:PerformTransactionResult>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
