@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * TODO:: нужно реализовать так чтобы конектиться к бд один раз
+ * TODO:: создать .env вытягивать секреты в bd.config и отсюда вытягивать к connect()
+ * TODO:: Repository Pattern реализовать
+ */
 class DB
 {
-    static function connect()
+    public static function connect()
     {
         $servername = "localhost";
         $username = "root";
@@ -18,7 +23,7 @@ class DB
         return $conn;
     }
 
-    static function findById($id)
+    public static function findById($id)
     {
         $conn = DB::connect();
         $sql = "SELECT * FROM users WHERE id = {$id}";
@@ -26,7 +31,7 @@ class DB
         return $result->fetch_assoc();
     }
 
-    static function getService($serviceId)
+    public static function getService($serviceId)
     {
         $conn = DB::connect();
         $sql = "SELECT * FROM services WHERE id = {$serviceId}";
@@ -34,23 +39,27 @@ class DB
         return $result->fetch_assoc();
     }
 
-    static function getWallet($clietnId)
+    /**
+     * @param $clientId
+     * @return array|null
+     * Сделал one-liner здесь если будет время нужно остальные функции так отрефакторить
+     */
+    public static function getWallet($clientId)
     {
-        $conn = DB::connect();
-        $sql = "SELECT * FROM wallets WHERE client_id = {$clietnId}";
-        $result = $conn->query($sql);
-        return $result->fetch_assoc();
+        return self::connect()
+            ->query("SELECT * FROM wallets WHERE client_id = {$clientId}")
+            ->fetch_assoc();
     }
 
-    static function findByUsername($username)
+    public static function findByUsername($username)
     {
-        $conn = DB::connect();
+        $conn = self::connect();
         $sql = "SELECT * FROM users WHERE username = '{$username}'";
         $result = $conn->query($sql);
         return $result->fetch_assoc();
     }
 
-    static function getTransaction($id)
+    public static function getTransaction($id)
     {
         $conn = DB::connect();
         $sql = "SELECT * FROM transactions WHERE id = '{$id}'";
@@ -58,7 +67,7 @@ class DB
         return $result->fetch_assoc();
     }
 
-    static function performTransaction($sender_id, $recipient_id, $amount)
+    public static function performTransaction($sender_id, $recipient_id, $amount)
     {
         //по идее тут надо делать кучу проверок и если вдруг один sql запрос не пройдет или же какая то проверка не
         //пройдет то нужно выдать ошибку что трансакция не удалась и изменить статус транзакции типа failed
@@ -82,7 +91,7 @@ class DB
         return true;
     }
 
-    static function createTransaction($sender, $recipient, $amount, $service_id, $status)
+    public static function createTransaction($sender, $recipient, $amount, $service_id, $status)
     {
         $conn = DB::connect();
         $sql = "INSERT INTO transactions (otpravlyalshik, poluchalshik, amount, status, service_id, created_at) VALUES ({$sender}, {$recipient}, {$amount}, '{$status}', {$service_id}, now())";
@@ -90,7 +99,7 @@ class DB
         return $conn->insert_id;
     }
 
-    static function updateTransactionStatus($new_transaction_id, $status)
+    public static function updateTransactionStatus($new_transaction_id, $status)
     {
         $conn = DB::connect();
         $sql_balance = "UPDATE transactions SET status = '{$status}' WHERE id = {$new_transaction_id}";

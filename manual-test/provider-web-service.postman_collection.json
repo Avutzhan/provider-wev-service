@@ -1,0 +1,67 @@
+{
+	"info": {
+		"_postman_id": "1e069fe4-73f4-40b0-9741-f0dc27eae42f",
+		"name": "provider-web-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://uws.provider.com/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <ns1:PerformTransactionArguments\n                xmlns:ns1=\"http://uws.provider.com/\"\n                xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n                xsi:type=\"ns1:PerformTransactionArguments\">\n            <password>123</password>\n            <username>pablo_escobar</username>\n            <amount>10000</amount>\n            <parameters>\n                <paramKey>phone</paramKey>\n                <paramValue>+7(903)888-88-88</paramValue>\n            </parameters>\n            <parameters>\n                <paramKey>card_number</paramKey>\n                <paramValue>4111 1111 1111 1111</paramValue>\n            </parameters>\n            <parameters>\n                <paramKey>customer_id</paramKey>\n                <paramValue>2</paramValue>\n            </parameters>\n            <parameters>\n                <paramKey>pin</paramKey>\n                <paramValue>12345678</paramValue>\n            </parameters>\n            <serviceId>1</serviceId>\n            <transactionId>1</transactionId>\n            <transactionTime>2011-04-26T18:07:22</transactionTime>\n        </ns1:PerformTransactionArguments>\n    </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://uws.provider.com/",
+					"protocol": "http",
+					"host": [
+						"uws",
+						"provider",
+						"com"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://uws.provider.com/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<!--Valid User-->\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n    <soapenv:Body>\n        <ns1:GetInformationArguments xmlns:ns1=\"http://uws.provider.com/\"\n                                     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"ns1:\nGetInformationArguments\">\n            <password>123</password>\n            <username>pablo_escobar</username>\n            <parameters>\n                <paramKey>client_id</paramKey>\n                <paramValue>1</paramValue>\n            </parameters>\n            <serviceId>1</serviceId>\n        </ns1:GetInformationArguments>\n    </soapenv:Body>\n</soapenv:Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://uws.provider.com/",
+					"protocol": "http",
+					"host": [
+						"uws",
+						"provider",
+						"com"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -11,23 +11,47 @@ include_once 'Service/Generics/GenericParam.php';
 include_once 'Service/Configs/DB.php';
 include_once 'Service/Configs/Auth.php';
 include_once 'Service/Configs/Validator.php';
+include_once 'Service/Response/Response.php';
+
 
 class Provider
 {
+    const NOW = '1000-01-01 00:00:0';
+
     public function PerformTransaction($args)
     {
+        // нужно подумать как инкапсулировать все эти валидации чтобы занимало по строке каждая или
+        // создать какую то функцию request_validator скормить ему $args и чтобы он все проверки делал внутри
+        // и возвращал соответствующие респонсы
         if (Auth::isNotValid($args->password, $args->username)) {
-            return new PerformTransactionResponse([], 0,'not valid user', 208,
-                gmdate('Y-m-d h:i:s', time()));
+            return new PerformTransactionResponse([], 0, Response::$statusTexts[Response::HTTP_UNAUTHORIZED],
+                Response::HTTP_UNAUTHORIZED, gmdate('Y-m-d h:i:s', time()));
         }
 
         if (Validator::isPhoneNotValid($args->parameters[0]->paramValue)) {
-            return new PerformTransactionResponse([], 0,$args->parameters[0]->paramValue . ' not valid phone number', 208,
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_VALID_PHONE_NUMBER],
+                    $args->parameters[0]->paramValue
+                ), Response::HTTP_NOT_VALID_PHONE_NUMBER,
                 gmdate('Y-m-d h:i:s', time()));
         }
 
         if (Validator::isCardNotValid($args->parameters[1]->paramValue)) {
-            return new PerformTransactionResponse([], 0,$args->parameters[1]->paramValue . ' not valid card number', 208,
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_VALID_CARD_NUMBER],
+                    $args->parameters[1]->paramValue
+                ), Response::HTTP_NOT_VALID_CARD_NUMBER,
+                gmdate('Y-m-d h:i:s', time()));
+        }
+
+        if (Validator::isMoneyNotEnough($args->transactionId, $args->amount)) {
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_ENOUGH_MONEY],
+                    $args->amount
+                ), Response::HTTP_NOT_ENOUGH_MONEY,
                 gmdate('Y-m-d h:i:s', time()));
         }
 
@@ -50,8 +74,8 @@ class Provider
             new GenericParam('date', $service['timestamp']),
         ];
 
-        return new PerformTransactionResponse($genParams, $new_transaction_id, 'success', 200,
-            $transaction_date['created_at']);
+        return new PerformTransactionResponse($genParams, $new_transaction_id, Response::$statusTexts[Response::HTTP_OK],
+            Response::HTTP_OK, $transaction_date['created_at']);
     }
 
     /**
@@ -59,8 +83,9 @@ class Provider
      */
     public function CheckTransaction()
     {
-        return new CheckTransactionResponse(11, 2, 3,
-            'no err', 'no err', 2, '1000-01-01 00:00:0');
+        return new CheckTransactionResponse(1, 1, 1,
+            'success', Response::$statusTexts[Response::HTTP_OK],
+            Response::HTTP_OK, self::NOW);
     }
 
     /**
@@ -68,8 +93,8 @@ class Provider
      */
     public function CancelTransaction()
     {
-        return new CancelTransactionResponse(2, 'no err', 2,
-            '1000-01-01 00:00:0');
+        return new CancelTransactionResponse(1, Response::$statusTexts[Response::HTTP_OK],
+            Response::HTTP_OK, self::NOW);
     }
 
     /**
@@ -79,14 +104,15 @@ class Provider
     public function GetInformation($args)
     {
         if (Auth::isNotValid($args->password, $args->username)) {
-            return new GetInformationResponse([], 'not valid user', 208,
-                gmdate('Y-m-d h:i:s', time()));
+            return new GetInformationResponse([], Response::$statusTexts[Response::HTTP_UNAUTHORIZED],
+                Response::HTTP_UNAUTHORIZED, gmdate('Y-m-d h:i:s', time()));
         }
 
         $wallet = DB::getWallet($args->parameters->paramValue);
         $service = DB::getService($args->serviceId);
         $client = DB::findById($args->parameters->paramValue);
 
+        //можно использовать паттерн Фабрика если успею реализую
         $genParams = [
             new GenericParam('card_number', $wallet['card_number']),
             new GenericParam('service', $service['title']),
@@ -95,8 +121,8 @@ class Provider
             new GenericParam('name', $client['name'])
         ];
 
-        return new GetInformationResponse($genParams, 'success', 200,
-            gmdate('Y-m-d h:i:s', $service['timestamp']));
+        return new GetInformationResponse($genParams, Response::$statusTexts[Response::HTTP_OK],
+            Response::HTTP_OK, gmdate('Y-m-d h:i:s', $service['timestamp']));
     }
 
     /**
@@ -104,9 +130,10 @@ class Provider
      */
     public function GetStatement()
     {
-        $statements = new TransactionStatement(1, 2, 1,
-            '1000-01-01 00:00:0');
-        return new GetStatementResponse($statements, 'no err', 2, '1000-01-01 00:00:0');
+        $statements = new TransactionStatement(1, 1, 1,
+            self::NOW);
+        return new GetStatementResponse($statements, Response::$statusTexts[Response::HTTP_OK], Response::HTTP_OK,
+            self::NOW);
     }
 
     /**
@@ -114,7 +141,8 @@ class Provider
      */
     public function ChangePassword()
     {
-        return new ChangePasswordResponse('no err', 2, '1000-01-01 00:00:0');
+        return new ChangePasswordResponse(Response::$statusTexts[Response::HTTP_OK], Response::HTTP_OK,
+            self::NOW);
     }
 }
 

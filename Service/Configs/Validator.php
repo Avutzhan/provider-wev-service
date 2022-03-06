@@ -1,5 +1,7 @@
 <?php
 
+include_once 'Service/Configs/DB.php';
+
 class Validator
 {
     /**
@@ -44,5 +46,21 @@ class Validator
             $sum += $val;
         }
         return (($sum % 10) != 0);
+    }
+
+    /**
+     * @param $sender
+     * @param $amount
+     * @return bool
+     * Eсли в балансе не хватает денег вернет true
+     */
+    public static function isMoneyNotEnough($sender, $amount)
+    {
+        $wallet = DB::getWallet($sender);
+        if ($wallet['balance'] - $amount < 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
