@@ -18,45 +18,17 @@ class Provider
 {
     const NOW = '1000-01-01 00:00:0';
 
+    /**
+     * @param $args
+     * @return PerformTransactionResponse|void
+     * Клиент инициирует проведение транзакции для сервиса номер 1 с идентификатором в системе
+     * клиента 437 на сумму 1500 сум для клиента с номером 6324357 по карте с пином 12345678.
+     */
     public function PerformTransaction($args)
     {
-        // нужно подумать как инкапсулировать все эти валидации чтобы занимало по строке каждая или
-        // создать какую то функцию request_validator скормить ему $args и чтобы он все проверки делал внутри
-        // и возвращал соответствующие респонсы
-        if (Auth::isNotValid($args->password, $args->username)) {
-            return new PerformTransactionResponse([], 0, Response::$statusTexts[Response::HTTP_UNAUTHORIZED],
-                Response::HTTP_UNAUTHORIZED, gmdate('Y-m-d h:i:s', time()));
+        if (is_object($validator = Validator::bigValidator($args))) {
+            return $validator;
         }
-
-        if (Validator::isPhoneNotValid($args->parameters[0]->paramValue)) {
-            return new PerformTransactionResponse([], 0,
-                Response::makeResponseText(
-                    Response::$statusTexts[Response::HTTP_NOT_VALID_PHONE_NUMBER],
-                    $args->parameters[0]->paramValue
-                ), Response::HTTP_NOT_VALID_PHONE_NUMBER,
-                gmdate('Y-m-d h:i:s', time()));
-        }
-
-        if (Validator::isCardNotValid($args->parameters[1]->paramValue)) {
-            return new PerformTransactionResponse([], 0,
-                Response::makeResponseText(
-                    Response::$statusTexts[Response::HTTP_NOT_VALID_CARD_NUMBER],
-                    $args->parameters[1]->paramValue
-                ), Response::HTTP_NOT_VALID_CARD_NUMBER,
-                gmdate('Y-m-d h:i:s', time()));
-        }
-
-        if (Validator::isMoneyNotEnough($args->transactionId, $args->amount)) {
-            return new PerformTransactionResponse([], 0,
-                Response::makeResponseText(
-                    Response::$statusTexts[Response::HTTP_NOT_ENOUGH_MONEY],
-                    $args->amount
-                ), Response::HTTP_NOT_ENOUGH_MONEY,
-                gmdate('Y-m-d h:i:s', time()));
-        }
-
-        //Клиент инициирует проведение транзакции для сервиса номер 1 с идентификатором в системе
-        //клиента 437 на сумму 1500 сум для клиента с номером 6324357 по карте с пином 12345678.
 
         //begin transaction
         $new_transaction_id = DB::createTransaction($args->transactionId, $args->parameters[2]->paramValue, $args->amount, $args->serviceId, 'in progress');

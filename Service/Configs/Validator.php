@@ -1,6 +1,11 @@
 <?php
 
 include_once 'Service/Configs/DB.php';
+include_once 'Service/Response/PerformTransactionResponse.php';
+include_once 'Service/Configs/Auth.php';
+include_once 'Service/Configs/Validator.php';
+include_once 'Service/Configs/Validator.php';
+include_once 'Service/Response/Response.php';
 
 class Validator
 {
@@ -61,6 +66,41 @@ class Validator
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static function bigValidator($args)
+    {
+        if (Auth::isNotValid($args->password, $args->username)) {
+            return new PerformTransactionResponse([], 0, Response::$statusTexts[Response::HTTP_UNAUTHORIZED],
+                Response::HTTP_UNAUTHORIZED, gmdate('Y-m-d h:i:s', time()));
+        }
+
+        if (self::isPhoneNotValid($args->parameters[0]->paramValue)) {
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_VALID_PHONE_NUMBER],
+                    $args->parameters[0]->paramValue
+                ), Response::HTTP_NOT_VALID_PHONE_NUMBER,
+                gmdate('Y-m-d h:i:s', time()));
+        }
+
+        if (self::isCardNotValid($args->parameters[1]->paramValue)) {
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_VALID_CARD_NUMBER],
+                    $args->parameters[1]->paramValue
+                ), Response::HTTP_NOT_VALID_CARD_NUMBER,
+                gmdate('Y-m-d h:i:s', time()));
+        }
+
+        if (self::isMoneyNotEnough($args->transactionId, $args->amount)) {
+            return new PerformTransactionResponse([], 0,
+                Response::makeResponseText(
+                    Response::$statusTexts[Response::HTTP_NOT_ENOUGH_MONEY],
+                    $args->amount
+                ), Response::HTTP_NOT_ENOUGH_MONEY,
+                gmdate('Y-m-d h:i:s', time()));
         }
     }
 }
