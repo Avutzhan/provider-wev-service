@@ -30,11 +30,10 @@ class Provider
             return $validator;
         }
 
-        //begin transaction
-        $new_transaction_id = DB::createTransaction($args->transactionId, $args->parameters[2]->paramValue, $args->amount, $args->serviceId, 'in progress');
+        $new_transaction_id = DB::createTransaction($args->transactionId, $args->parameters[2]->paramValue,
+            $args->amount, $args->serviceId, 'in progress');
         DB::performTransaction($args->transactionId, $args->parameters[2]->paramValue, $args->amount);
         DB::updateTransactionStatus($new_transaction_id, 'done');
-        // end transaction
 
         $current_balance = DB::getWallet($args->transactionId);
         $service = DB::getService($args->serviceId);

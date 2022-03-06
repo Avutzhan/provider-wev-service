@@ -42,7 +42,7 @@ class DB
     /**
      * @param $clientId
      * @return array|null
-     * Сделал one-liner здесь если будет время нужно остальные функции так отрефакторить
+     * Сделал one-liner здесь если будет время нужно отсальные функции так отрефакторить
      */
     public static function getWallet($clientId)
     {
@@ -69,26 +69,73 @@ class DB
 
     public static function performTransaction($sender_id, $recipient_id, $amount)
     {
-        //по идее тут надо делать кучу проверок и если вдруг один sql запрос не пройдет или же какая то проверка не
-        //пройдет то нужно выдать ошибку что трансакция не удалась и изменить статус транзакции типа failed
-        //было бы больше времени и команда то можно было бы подумать что тут можно написать еще
-        //а так я написал самый наивный performTransaction который подразумевает что большая часть данныч и условий правильные
-        $conn = DB::connect();
-        //decrement
-        $sql = "SELECT * FROM wallets WHERE client_id = '{$sender_id}'";
-        $result = $conn->query($sql);
-        $col = $result->fetch_assoc();
-        $total_sender_balance = $col['balance'] - $amount;
-        $sql_balance = "UPDATE wallets SET balance = {$total_sender_balance} WHERE client_id = '{$sender_id}'";
-        $conn->query($sql_balance);
-        //increment
+        if (is_object($decrement = self::decrement($sender_id, $amount))) {
+            return $decrement;
+        }
+
+        if (is_object($increment = self::increment($recipient_id, $amount))) {
+            return $increment;
+        }
+    }
+
+    /**
+     * @param $sender_id
+     * @param $amount
+     * Можно:
+     *  разделить эту функцию так как она имеет две ответсвенности
+     *  убрать повторяющийся код
+     *  кастомные exceptions
+     *  возращать сообщение об ошибке на каком либо этапе
+     *  если останется время отрефакторю
+     */
+    public static function decrement($sender_id, $amount)
+    {
+        $conn = self::connect();
+
+        try {
+            // Start transaction
+            $conn->begin_transaction();
+            $result = $conn->query("SELECT * FROM wallets WHERE client_id = '{$sender_id}'");
+            // Commit changes
+            $conn->commit();
+
+        } catch (Exception $e) {
+            // Something went wrong. Rollback
+            $conn->rollback();
+            throw $e;
+        }
+
+        try {
+            $col = $result->fetch_assoc();
+            // Start transaction
+            $conn->begin_transaction();
+            $total_sender_balance = $col['balance'] - $amount;
+            $sql_balance = "UPDATE wallets SET balance = {$total_sender_balance} WHERE client_id = '{$sender_id}'";
+            $conn->query($sql_balance);
+            // Commit changes
+            $conn->commit();
+
+        } catch (Exception $e) {
+            // Something went wrong. Rollback
+            $conn->rollback();
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $recipient_id
+     * @param $amount
+     * Нужно отрефакторить этот кусок точно так же как decrement и улучшить дальше как описано выше
+     */
+    public static function increment($recipient_id, $amount)
+    {
+        $conn = self::connect();
         $sql2 = "SELECT * FROM wallets WHERE client_id = '{$recipient_id}'";
         $result2 = $conn->query($sql2);
         $col2 = $result2->fetch_assoc();
         $total_recipient_balance = $col2['balance'] + $amount;
         $sql_balance = "UPDATE wallets SET balance = {$total_recipient_balance} WHERE client_id = '{$recipient_id}'";
         $conn->query($sql_balance);
-        return true;
     }
 
     public static function createTransaction($sender, $recipient, $amount, $service_id, $status)
